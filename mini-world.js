@@ -23,7 +23,7 @@ if(data){
  const {race,weather}=data
  const h=w.addStack(),left=h.addStack();left.layoutVertically()
  label(left,race.Circuit.Location.locality,21,true)
- const df=new DateFormatter();df.locale="en_US";df.timeZone=weather.timezone;df.dateFormat="EEE, MMM d · HH:mm"
+ const df={string(d){const shifted=new Date(d.getTime()+Number(weather.utc_offset_seconds||0)*1000);const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return days[shifted.getUTCDay()]+", "+months[shifted.getUTCMonth()]+" "+shifted.getUTCDate()+" · "+String(shifted.getUTCHours()).padStart(2,"0")+":"+String(shifted.getUTCMinutes()).padStart(2,"0")}}
  label(left,df.string(new Date()),12)
  h.addSpacer()
  const right=h.addStack();right.layoutVertically()
@@ -32,8 +32,8 @@ if(data){
  label(right,c===0?"Clear":c<=3?"Cloudy":c<=48?"Fog":c<=67?"Rain":c<=77?"Snow":c<=86?"Showers":"Storm",12)
  w.addSpacer()
  let scene=false
- try{const m=await get(base+"assets/manifest.json");const entry=m.circuits[race.Circuit.circuitId];if(entry&&entry.image){const img=await new Request(base+entry.image).loadImage();w.backgroundImage=img;scene=true}}catch(e){}
- if(!scene){label(w,race.raceName,22,true);label(w,race.Circuit.circuitName,13);label(w,"Scene pending",12)}
+ try{const m=await get(base+"assets/manifest.json");const entry=m.circuits[race.Circuit.circuitId];if(entry&&entry.image){const wide=config.widgetFamily==="extraLarge"||args.widgetParameter==="wide";const path=(wide?entry.wide:entry.square)||entry.image;const img=await new Request(base+path).loadImage();w.backgroundImage=img;scene=true}}catch(e){}
+ if(!scene){label(w,race.raceName,22,true);label(w,race.Circuit.circuitName,13);label(w,"Circuit artwork pending",12)}
  w.addSpacer()
  const start=new Date(race.date+"T"+(race.time||"23:59:59Z"))
  label(w,"RACE · "+race.date,12,true)
