@@ -80,15 +80,20 @@ for (const [name, expected] of Object.entries(hashes)) {
   if (request.response.statusCode !== 200) throw new Error("下載失敗 · " + name);
   const actual = sha256(decodeBase64(data.toBase64String()));
   if (actual !== expected) throw new Error("檔案驗證失敗 · " + name + "\n預期 " + expected + "\n收到 " + actual);
-  const filename = names[name] + " " + release.slice(0, 7) + ".js";
-  const path = fm.joinPath(fm.documentsDirectory(), filename);
-  if (fm.fileExists(path)) {
+  const stem = names[name] + " " + release.slice(0, 7);
+  let number = 1;
+  let filename;
+  let path;
+  while (true) {
+    filename = stem + (number === 1 ? "" : " (" + number + ")") + ".js";
+    path = fm.joinPath(fm.documentsDirectory(), filename);
+    if (!fm.fileExists(path)) break;
     await fm.downloadFileFromiCloud(path);
-    if (sha256(decodeBase64(fm.read(path).toBase64String())) !== expected) {
-      throw new Error("同名腳本已被修改，請先重新命名 · " + filename);
-    }
+    if (sha256(decodeBase64(fm.read(path).toBase64String())) === expected) break;
+    // Scriptable headers or user edits may change existing bytes. Install beside them.
+    number++;
   }
-  files.push({ path, data });
+  files.push({ path, data, filename });
 }
 // All downloads and existing filenames are checked before installation.
 const created = [];
@@ -107,7 +112,7 @@ try {
 const alert = new Alert();
 alert.title = "三個小工具已安裝";
 alert.message = "版本 " + release.slice(0, 7) +
-  "\n\nScriptable 清單中已加入 F1 賽道、F1 賽果、F1 維修區。" +
+  "\n\n請開啟以下腳本\n" + files.map(file => file.filename.replace(/\.js$/, "")).join("\n") +
   "\n先開啟 F1 維修區一次下載新版素材，再加入主畫面。超大型會自動使用橫向版。" +
   "\n點擊賽果可看全表，點擊維修區可播放動畫。";
 alert.addAction("完成");
