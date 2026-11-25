@@ -1,0 +1,17 @@
+{
+  "release": "d4dc71b3f377c90e6b3744f831774fa6db4ad29d",
+  "files": {
+    "mini-world.js": {
+      "sha256": "989ab668f75655346941f97955dae25f1f025a91adfb514d49005de064277f8e",
+      "gitBlob": "0ad806f695191223a25218dd7af827af47345284"
+    },
+    "live-timing.js": {
+      "sha256": "f642779d642b776692bf5134323bad22957e798754f9976233f90aa768d8f1ce",
+      "gitBlob": "740b9068a79703e3e8a4f247e5ce8acfeae83066"
+    },
+    "pit-garage.js": {
+      "sha256": "e81d47da7c5819005332f202d92e11066f9bd33cdc8237b45763e2f72ff2d8f2",
+      "gitBlob": "74d752210a15e6af2fcbaad2952745b4d98967c1"
+    }
+  }
+}
