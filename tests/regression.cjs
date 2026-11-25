@@ -331,7 +331,7 @@ const timingResolver = url => {
     assert.equal(run.storage.size, 1);
     assert(run.storage.has("/docs/F1 Mini World.js"));
   });
-  await test("installer repeat is idempotent and detects edits to installed files", async () => {
+  await test("installer repeats safely and installs beside edited files", async () => {
     const first = await install();
     const repeated = await install({ storage: first.storage });
     assert.equal(repeated.error, undefined);
@@ -339,9 +339,19 @@ const timingResolver = url => {
     const installed = [...first.storage.keys()].find(file => file.includes("F1 賽道"));
     first.storage.set(installed, Buffer.from("user changes"));
     const modified = await install({ storage: first.storage });
-    assert(modified.error);
-    assert.equal(modified.writes, 0);
+    assert.equal(modified.error, undefined);
+    assert.equal(modified.writes, 1);
     assert.equal(first.storage.get(installed).toString(), "user changes");
+    const newPath = installed.replace(/\.js$/, " (2).js");
+    assert.equal(first.storage.get(newPath).toString(), read("mini-world.js"));
+    const retry = await install({ storage: first.storage });
+    assert.equal(retry.error, undefined);
+    assert.equal(retry.writes, 0);
+    first.storage.set(newPath, Buffer.from("Scriptable metadata and edited content"));
+    const again = await install({ storage: first.storage });
+    assert.equal(again.error, undefined);
+    assert.equal(again.writes, 1);
+    assert(first.storage.has(installed.replace(/\.js$/, " (3).js")));
   });
   await test("published release bytes match Git blob IDs and installer SHA-256 values", async () => {
     const release = JSON.parse(read("tests/release-integrity.json"));
