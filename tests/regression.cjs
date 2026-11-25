@@ -382,6 +382,21 @@ const timingResolver = url => {
     assert.equal(modified.writes, 0);
     assert.equal(first.storage.get(installed).toString(), "user changes");
   });
+  await test("published release bytes match Git blob IDs and installer SHA-256 values", async () => {
+    const release = JSON.parse(read("tests/release-integrity.json"));
+    const installer = read("install-release.js");
+    assert(installer.includes('const release = "' + release.release + '"'));
+    for (const [name, expected] of Object.entries(release.files)) {
+      const bytes = fs.readFileSync(path.join(root, name));
+      const header = Buffer.from("blob " + bytes.length + "\0");
+      assert.equal(crypto.createHash("sha1").update(header).update(bytes).digest("hex"), expected.gitBlob, name + " Git bytes");
+      const actual = crypto.createHash("sha256").update(bytes).digest("hex");
+      assert.equal(actual, expected.sha256, name + " release SHA-256");
+      assert(installer.includes('"' + name + '": "' + actual + '"'));
+      const extraNewline = crypto.createHash("sha256").update(bytes).update("\n").digest("hex");
+      assert.notEqual(extraNewline, expected.sha256);
+    }
+  });
   console.log("\n" + passed + " regression tests passed.");
 })().catch(error => { console.error(error); process.exitCode = 1; });
 
