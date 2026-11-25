@@ -60,11 +60,11 @@ function decodeBase64(value) {
   return bytes;
 }
 
-const release = "d4dc71b3f377c90e6b3744f831774fa6db4ad29d";
+const release = "03232bd62585f2282b6365d52bcae7f6f9ec131e";
 const hashes = {
   "mini-world.js": "989ab668f75655346941f97955dae25f1f025a91adfb514d49005de064277f8e",
   "live-timing.js": "f642779d642b776692bf5134323bad22957e798754f9976233f90aa768d8f1ce",
-  "pit-garage.js": "e81d47da7c5819005332f202d92e11066f9bd33cdc8237b45763e2f72ff2d8f2"
+  "pit-garage.js": "fa701ce1ccbbc2ea701c42c7d8ebf0a18057eb006807d826dc2ec2b861714c0a"
 };
 const names = {
   "mini-world.js": "F1 賽道",
@@ -108,7 +108,7 @@ const alert = new Alert();
 alert.title = "三個小工具已安裝";
 alert.message = "版本 " + release.slice(0, 7) +
   "\n\nScriptable 清單中已加入 F1 賽道、F1 賽果、F1 維修區。" +
-  "\n加入主畫面後選對應腳本即可。超大型會自動使用橫向版。" +
+  "\n先開啟 F1 維修區一次下載新版素材，再加入主畫面。超大型會自動使用橫向版。" +
   "\n點擊賽果可看全表，點擊維修區可播放動畫。";
 alert.addAction("完成");
 await alert.presentAlert();

@@ -277,47 +277,8 @@ const timingResolver = url => {
       assert.equal(hash.sha256(hash.decodeBase64(bytes.toString("base64"))), crypto.createHash("sha256").update(bytes).digest("hex"));
     }
   });
-  await test("garage controls pause, restart and cycle four phases", async () => {
-    const source = read("pit-garage.js");
-    const html = JSON.parse(source.match(/const html = ("(?:\\.|[^"\\])*");/)[1]);
-    const script = html.split("<script>")[1].split("</script>")[0];
-    const controls = Object.fromEntries(["pause", "restart", "next", "stage"].map(name => [name, {}]));
-    let drawingCalls = 0;
-    const context = new Proxy({ createLinearGradient: () => ({ addColorStop() {} }) }, {
-      get(target, key) {
-        return target[key] || ((...args) => {
-          for (const value of args) if (typeof value === "number") assert(Number.isFinite(value));
-          drawingCalls++;
-        });
-      }
-    });
-    const canvas = { width: 680, height: 680, getContext: () => context };
-    const sandbox = {
-      document: { querySelector: () => canvas, getElementById: name => controls[name], addEventListener() {} },
-      innerWidth: 1024, innerHeight: 768, devicePixelRatio: 2, requestAnimationFrame() {}
-    };
-    vm.createContext(sandbox);
-    vm.runInContext(script, sandbox);
-    vm.runInContext("frame(0);frame(100)", sandbox);
-    controls.pause.onclick();
-    assert.equal(vm.runInContext("paused", sandbox), true);
-    const before = vm.runInContext("elapsed", sandbox);
-    vm.runInContext("frame(200)", sandbox);
-    assert.equal(vm.runInContext("elapsed", sandbox), before);
-    controls.restart.onclick();
-    assert.equal(vm.runInContext("elapsed", sandbox), 0);
-    assert.equal(vm.runInContext("paused", sandbox), false);
-    for (let phase = 1; phase <= 4; phase++) {
-      controls.next.onclick();
-      vm.runInContext("frame(300)", sandbox);
-      assert.equal(vm.runInContext("elapsed", sandbox), (phase % 4) * 2000);
-    }
-    for (const size of [[680, 680], [1200, 680], [390, 600]]) {
-      for (const phase of [0, 0.125, 0.25, 0.5, 0.75, 0.99]) {
-        vm.runInContext("render(" + phase + "," + size.join(",") + ")", sandbox);
-      }
-    }
-    assert(drawingCalls > 1000);
+  await test("garage v2 framing, offline cache and stage controls", async () => {
+    await require("./garage-v2.cjs")();
   });
   async function install(options = {}) {
     const storage = options.storage || new Map([["/docs/F1 Mini World.js", Buffer.from("original user loader")]]);

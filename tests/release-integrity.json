@@ -1,5 +1,5 @@
 {
-  "release": "d4dc71b3f377c90e6b3744f831774fa6db4ad29d",
+  "release": "03232bd62585f2282b6365d52bcae7f6f9ec131e",
   "files": {
     "mini-world.js": {
       "sha256": "989ab668f75655346941f97955dae25f1f025a91adfb514d49005de064277f8e",
@@ -10,8 +10,8 @@
       "gitBlob": "740b9068a79703e3e8a4f247e5ce8acfeae83066"
     },
     "pit-garage.js": {
-      "sha256": "e81d47da7c5819005332f202d92e11066f9bd33cdc8237b45763e2f72ff2d8f2",
-      "gitBlob": "74d752210a15e6af2fcbaad2952745b4d98967c1"
+      "sha256": "fa701ce1ccbbc2ea701c42c7d8ebf0a18057eb006807d826dc2ec2b861714c0a",
+      "gitBlob": "710bf6ba707c86d392befd7edba66d0b02612752"
     }
   }
 }
