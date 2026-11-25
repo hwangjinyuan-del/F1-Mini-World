@@ -62,9 +62,9 @@ function decodeBase64(value) {
 
 const release = "d4dc71b3f377c90e6b3744f831774fa6db4ad29d";
 const hashes = {
-  "mini-world.js": "15e1dd09ad228c55f2da01ec10304a12fcb6dce5fec1fbf61adb102eb783c1dd",
-  "live-timing.js": "e2a36498032099c3ace40eb68dd385bd2af09bb13899b1f6ec24fd1ad7097f70",
-  "pit-garage.js": "0acf3abb05d10a286b1a52ebddb35f234211ed406ac1ba6b50ddc8f9c268747a"
+  "mini-world.js": "989ab668f75655346941f97955dae25f1f025a91adfb514d49005de064277f8e",
+  "live-timing.js": "f642779d642b776692bf5134323bad22957e798754f9976233f90aa768d8f1ce",
+  "pit-garage.js": "e81d47da7c5819005332f202d92e11066f9bd33cdc8237b45763e2f72ff2d8f2"
 };
 const names = {
   "mini-world.js": "F1 賽道",
@@ -78,7 +78,8 @@ for (const [name, expected] of Object.entries(hashes)) {
   request.timeoutInterval = 20;
   const data = await request.load();
   if (request.response.statusCode !== 200) throw new Error("下載失敗 · " + name);
-  if (sha256(decodeBase64(data.toBase64String())) !== expected) throw new Error("檔案驗證失敗 · " + name);
+  const actual = sha256(decodeBase64(data.toBase64String()));
+  if (actual !== expected) throw new Error("檔案驗證失敗 · " + name + "\n預期 " + expected + "\n收到 " + actual);
   const filename = names[name] + " " + release.slice(0, 7) + ".js";
   const path = fm.joinPath(fm.documentsDirectory(), filename);
   if (fm.fileExists(path)) {
